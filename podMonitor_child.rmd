@@ -1,0 +1,51 @@
+```{r}
+#| echo: false
+
+#calculate proportion working for
+percent_working<-timeblock_fast%>%
+  filter(times %within% interval(startdate,enddate))%>%
+  tabyl(status)%>%
+  filter(status==TRUE)%>%
+  mutate(percent=round(percent*100,1))%>%
+  pull(percent)
+
+#number not sent
+counts<-result%>%
+  #filter(eventName %in% c("BROKEN","FIXED","REPORTED"))%>%
+  mutate(timestamp=ymd_hms(`_id`))%>%
+  mutate(combined=lastSent+lastNotSent)%>%
+  filter(timestamp %within% interval(startdate,enddate))%>%
+  slice_max(combined, with_ties=FALSE)%>%
+  select(lastSent,lastNotSent)
+
+if(month(startdate)==month(now())){
+  header_text<-glue("So far in {month(startdate, label = TRUE, abbr = FALSE)} the pod has worked {percent_working}% of the time.")
+  summary_text<-glue("{counts$lastSent} pods have been sent and {counts$lastNotSent} have not, equating to an additional {0.5*counts$lastSent} patient hours spent in CED.")
+}else{
+header_text<-glue("In {month(startdate, label = TRUE, abbr = FALSE)} the pod was working {percent_working}% of the time.")
+summary_text<-glue("{counts$lastSent} pods were sent and {counts$lastNotSent} were not, equating to an additional {0.5*counts$lastSent} patient hours spent in CED.")
+}
+```
+#### `r header_text`
+```{r}
+greenRed<-c("#abdda4" , "#fee08b", "#fdae61", "#f46d43","#d53e4f")
+
+timeblock_fast%>%
+  filter(times %within% interval(startdate,enddate))%>%
+  #mutate(census=factor(as.character(census), levels=(levels(census))))%>%
+  ggplot(aes(x=base_hour, y=weekday, fill=status))+
+  scale_y_discrete(position = "right")+
+  geom_tile(colour="white", linewidth=0.2)+
+  scale_fill_manual(name = "Pod working", values= c("#d53e4f", "#abdda4"))+
+  labs(x="Hour of Day", y="")+
+  theme(legend.position = 'bottom')+
+  guides(fill = guide_legend(nrow = 1))+
+  #facet_grid(week ~ .)
+  facet_wrap(~week,strip.position = "left",ncol=1)+
+  theme(legend.position = "none")
+``` 
+
+#### `r summary_text`
+
+---
+
