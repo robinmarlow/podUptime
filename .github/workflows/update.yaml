@@ -14,20 +14,25 @@ jobs:
         with:
           packages: |
             any::tidyverse
+            any::sofa
+            any::janitor
+            any::jsonlite
+            any::glue
+            any::htmltools
  
       - name: Check out repository
         uses: actions/checkout@v3
 
       - name: Import data
         env: 
-          SECRET_THING: ${{ secrets.SECRET_THING }}
-          SECOND_SECRET: ${{ secrets.SECOND_SECRET }}
-        run: Rscript -e 'source("import-data.R")'
+          SECRET_USR: ${{ secrets.SECRET_USR }}
+          SECRET_PWD: ${{ secrets.SECRET_PWD }}
+        run: Rscript -e 'source("podMonitor.rmd")'
 
       - name: Commit results
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add test.txt
+          git add podMonitor.html
           git commit -m 'Data updated' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
