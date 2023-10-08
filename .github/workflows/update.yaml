@@ -30,10 +30,13 @@ jobs:
           SECRET_PWD: ${{ secrets.SECRET_PWD }}
         run: Rscript -e 'rmarkdown::render(input = "podMonitor.rmd")'
 
+      - name: Rename file 
+        run: mkdir site && mv podMonitor.html ./site/index.html
+        
       - name: Commit results
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add podMonitor.html
+          git add site
           git commit -m 'Data updated' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
