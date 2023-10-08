@@ -1,6 +1,9 @@
 ---
 title: "Children's Emergency Department PodMonitor"
-output: html_document
+output:
+  html_document:
+    includes:
+      in_header: podMonitor_header.html
 ---
 
 ```{r setup, include=FALSE}
