@@ -34,7 +34,7 @@ jobs:
         run: Rscript -e 'rmarkdown::render(input = "podMonitor.rmd")'
 
       - name: Rename file 
-        run: mkdir site && mv podMonitor.html ./site/index.html
+        run: mv podMonitor.html ./site/index.html
         
       - name: Commit results
         run: |
