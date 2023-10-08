@@ -20,10 +20,10 @@ counts<-result%>%
 
 if(month(startdate)==month(now())){
   header_text<-glue("So far in {month(startdate, label = TRUE, abbr = FALSE)} the pod has worked {percent_working}% of the time.")
-  summary_text<-glue("{counts$lastSent} pods have been sent and {counts$lastNotSent} have not, equating to an additional {0.5*counts$lastSent} patient hours spent in CED.")
+  summary_text<-glue("{counts$lastSent} pods have been sent and {counts$lastNotSent} have not, equating to an additional {0.5*counts$lastNotSent} patient hours spent in CED.")
 }else{
 header_text<-glue("In {month(startdate, label = TRUE, abbr = FALSE)} the pod was working {percent_working}% of the time.")
-summary_text<-glue("{counts$lastSent} pods were sent and {counts$lastNotSent} were not, equating to an additional {0.5*counts$lastSent} patient hours spent in CED.")
+summary_text<-glue("{counts$lastSent} pods were sent and {counts$lastNotSent} were not, equating to an additional {0.5*counts$lastNotSent} patient hours spent in CED.")
 }
 ```
 #### `r header_text`
