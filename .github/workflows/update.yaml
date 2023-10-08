@@ -19,6 +19,7 @@ jobs:
             any::jsonlite
             any::glue
             any::htmltools
+            any::rmarkdown
  
       - name: Check out repository
         uses: actions/checkout@v3
@@ -27,7 +28,7 @@ jobs:
         env: 
           SECRET_USR: ${{ secrets.SECRET_USR }}
           SECRET_PWD: ${{ secrets.SECRET_PWD }}
-        run: Rscript -e 'source("podMonitor.rmd")'
+        run: Rscript -e 'rmarkdown::render(input = "podMonitor.rmd")'
 
       - name: Commit results
         run: |
