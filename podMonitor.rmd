@@ -1,5 +1,5 @@
 ---
-title: "Children's Emergency Department PodMonitor"
+title: "BRI Emergency Department A300 PodMonitor"
 output:
   html_document:
     includes:
@@ -29,7 +29,7 @@ z<-Cushion$new(
   user=SECRET_USR,
   pwd=SECRET_PWD)
 
-res <- db_query(z, dbname = "podevents",
+res <- db_query(z, dbname = "bri_database",
                 selector = list(`_id` = list(`$gt` = NULL)),
                 fields = c("_id","eventName", "uniqueID", "date_then", "podWorking", "lastSent", "lastNotSent", "podReported"),
                 as = "json")
@@ -96,7 +96,7 @@ htmltools::img(src = knitr::image_uri("CED_Rings_Logo.png"),
 
 ```{r createTimeblock}  
 
-oldestDate=dmy('08-06-2023')
+oldestDate=dmy('01-11-2023')
 
 timeblock_fast<-data.frame(
   times=seq(ymd_hm(paste0(oldestDate,' 08:00')),now(),by="1 hour"))|>
@@ -113,7 +113,7 @@ timeblock_fast<-data.frame(
   mutate(base_hour=factor(base_hour, levels=c(8:23,0:7)))%>%
   mutate(status = if_else(times %within% as.list(downtime), FALSE, TRUE))
 
-listOfDates<-c(oldestDate,seq(dmy("1-7-23"),today(),by="1 month"))
+listOfDates<-c(seq(dmy("01-11-23"),today(),by="1 month"))
 
 startDate=listOfDates
 endDate=tail(listOfDates,-1)
