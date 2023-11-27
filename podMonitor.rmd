@@ -43,6 +43,7 @@ times<-result%>%
   mutate(order=cumsum(podWorking))%>%
   mutate(timestamp=ymd_hms(`_id`))%>%
   select (timestamp,eventName,order)%>%
+  group_by(order,eventName)%>%slice_head(n=1)%>%ungroup()%>%
   group_by(order)%>%
   pivot_wider(names_from = eventName, values_from = timestamp)%>%
   mutate(downtime=round(time_length(interval(BROKEN,FIXED),"hour"),1))%>%
@@ -54,6 +55,7 @@ counts<-result%>%
   mutate(podWorking=lag(podWorking, default =0))%>%
   mutate(order=cumsum(podWorking))%>%
   select (lastNotSent,eventName,order)%>%
+  group_by(order,eventName)%>%slice_head(n=1)%>%ungroup()%>%
   group_by(order)%>%
   pivot_wider(names_from = eventName, values_from = lastNotSent)%>%
   mutate(notsent=FIXED-(BROKEN-1))%>%
@@ -111,7 +113,7 @@ timeblock_fast<-data.frame(
   mutate(week=paste("w/c:",(format(week, format="%d %b"))))%>%
   mutate(week=forcats::as_factor(week))%>%
   mutate(base_hour=factor(base_hour, levels=c(8:23,0:7)))%>%
-  mutate(status = if_else(times %within% as.list(downtime), FALSE, TRUE))
+  mutate(status = if_else(times %within% as.list(downtime), FALSE, TRUE, missing=TRUE))
 
 listOfDates<-c(oldestDate,seq(dmy("1-7-23"),today(),by="1 month"))
 
